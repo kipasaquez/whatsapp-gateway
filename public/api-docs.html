@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Gateway API Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .method-get { color: #22c55e; }
+        .method-post { color: #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-gray-900 text-white">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold">WhatsApp Gateway API</h1>
+                    <a href="/" class="text-sm hover:text-gray-300">Dashboard</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- Send Message API -->
+            <div class="bg-white shadow rounded-lg mb-6">
+                <div class="px-4 py-5 sm:p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Send Message API</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Method:</span>
+                            <span class="method-post ml-2 font-mono">POST</span>
+                        </div>
+                        
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Endpoint:</span>
+                            <code class="ml-2 px-2 py-1 bg-gray-100 rounded font-mono text-sm">/send-text</code>
+                        </div>
+
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Headers:</span>
+                            <pre class="mt-2 p-4 bg-gray-100 rounded font-mono text-sm">
+Content-Type: application/json</pre>
+                        </div>
+
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Request Body:</span>
+                            <pre class="mt-2 p-4 bg-gray-100 rounded font-mono text-sm">
+{
+    "number": "6281234567890",  // Recipient number (required)
+    "message": "Hello World!"    // Message text (required)
+}</pre>
+                        </div>
+
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Response:</span>
+                            <pre class="mt-2 p-4 bg-gray-100 rounded font-mono text-sm">
+{
+    "status": true,
+    "message": "Pesan teks berhasil dikirim.",
+    "messageId": "XXXXXXXXXXXXX"
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Send Media API -->
+            <div class="bg-white shadow rounded-lg mb-6">
+                <div class="px-4 py-5 sm:p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Send Media API</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Method:</span>
+                            <span class="method-post ml-2 font-mono">POST</span>
+                        </div>
+                        
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Endpoint:</span>
+                            <code class="ml-2 px-2 py-1 bg-gray-100 rounded font-mono text-sm">/send-media</code>
+                        </div>
+
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Headers:</span>
+                            <pre class="mt-2 p-4 bg-gray-100 rounded font-mono text-sm">
+Content-Type: application/json</pre>
+                        </div>
+
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Request Body:</span>
+                            <pre class="mt-2 p-4 bg-gray-100 rounded font-mono text-sm">
+{
+    "number": "6281234567890",           // Recipient number (required)
+    "type": "image",                     // Media type: "image", "video", "document" (required)
+    "url": "https://example.com/img.jpg", // Media URL (required)
+    "caption": "Image caption"           // Caption text (optional)
+}</pre>
+                        </div>
+
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Response:</span>
+                            <pre class="mt-2 p-4 bg-gray-100 rounded font-mono text-sm">
+{
+    "status": true,
+    "message": "Pesan media berhasil dikirim."
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Status API -->
+            <div class="bg-white shadow rounded-lg mb-6">
+                <div class="px-4 py-5 sm:p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Get Status API</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Method:</span>
+                            <span class="method-get ml-2 font-mono">GET</span>
+                        </div>
+                        
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Endpoint:</span>
+                            <code class="ml-2 px-2 py-1 bg-gray-100 rounded font-mono text-sm">/api/status</code>
+                        </div>
+
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Response:</span>
+                            <pre class="mt-2 p-4 bg-gray-100 rounded font-mono text-sm">
+{
+    "connected": true,
+    "uptime": "1h 30m 45s",
+    "messagesSent": 42
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example Usage -->
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Example Usage (cURL)</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Send Text Message:</span>
+                            <pre class="mt-2 p-4 bg-gray-100 rounded font-mono text-sm overflow-x-auto">
+curl -X POST http://localhost:8000/send-text \
+  -H "Content-Type: application/json" \
+  -d '{
+    "number": "6281234567890",
+    "message": "Hello World!"
+  }'</pre>
+                        </div>
+
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Send Media Message:</span>
+                            <pre class="mt-2 p-4 bg-gray-100 rounded font-mono text-sm overflow-x-auto">
+curl -X POST http://localhost:8000/send-media \
+  -H "Content-Type: application/json" \
+  -d '{
+    "number": "6281234567890",
+    "type": "image",
+    "url": "https://example.com/image.jpg",
+    "caption": "Check this out!"
+  }'</pre>
+                        </div>
+
+                        <div>
+                            <span class="text-sm font-medium text-gray-500">Get Status:</span>
+                            <pre class="mt-2 p-4 bg-gray-100 rounded font-mono text-sm overflow-x-auto">
+curl http://localhost:8000/api/status</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
