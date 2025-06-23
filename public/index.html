@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Gateway Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <h1 class="text-2xl font-bold text-gray-900">WhatsApp Gateway Dashboard</h1>
+                        <a href="/api-docs.html" class="text-sm text-blue-600 hover:text-blue-800">API Docs</a>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span id="connection-status" class="px-3 py-1 rounded-full text-sm font-medium">
+                            Connecting...
+                        </span>
+                        <button id="logout-btn" class="hidden px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- QR Code Section -->
+            <div id="qr-section" class="hidden mb-6">
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h2 class="text-lg font-medium text-gray-900 mb-4">Scan QR Code to Login</h2>
+                        <div id="qr-code" class="flex justify-center">
+                            <img id="qr-image" src="" alt="QR Code" class="max-w-xs">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="main-content" class="hidden">
+                <div class="px-4 py-6 sm:px-0">
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <!-- Webhook Settings -->
+                        <div class="bg-white overflow-hidden shadow rounded-lg">
+                            <div class="px-4 py-5 sm:p-6">
+                                <h2 class="text-lg font-medium text-gray-900 mb-4">Webhook Settings</h2>
+                                <form id="webhook-form" class="space-y-4">
+                                    <div>
+                                        <label for="webhook-url" class="block text-sm font-medium text-gray-700">
+                                            Webhook URL
+                                        </label>
+                                        <input type="url" id="webhook-url" name="webhook-url" 
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                            placeholder="https://your-webhook-url.com">
+                                    </div>
+                                    <div>
+                                        <label for="delay-time" class="block text-sm font-medium text-gray-700">
+                                            Delay Time (ms)
+                                        </label>
+                                        <input type="number" id="delay-time" name="delay-time" 
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                            placeholder="2000">
+                                    </div>
+                                    <div class="flex justify-end">
+                                        <button type="submit" 
+                                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                            Save Settings
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Read Receipt Settings -->
+                        <div class="bg-white overflow-hidden shadow rounded-lg">
+                            <div class="px-4 py-5 sm:p-6">
+                                <h2 class="text-lg font-medium text-gray-900 mb-4">Read Receipt Settings</h2>
+                                <form id="read-receipt-form" class="space-y-4">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="enable-read-receipts" name="enable-read-receipts"
+                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <label for="enable-read-receipts" class="ml-2 block text-sm text-gray-900">
+                                            Enable Read Receipts
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label for="read-webhook-url" class="block text-sm font-medium text-gray-700">
+                                            Read Receipt Webhook URL
+                                        </label>
+                                        <input type="url" id="read-webhook-url" name="read-webhook-url"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                            placeholder="https://your-read-receipt-webhook.com">
+                                    </div>
+                                    <div class="flex justify-end">
+                                        <button type="submit"
+                                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                            Save Settings
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Status Panel -->
+                        <div class="bg-white overflow-hidden shadow rounded-lg lg:col-span-2">
+                            <div class="px-4 py-5 sm:p-6">
+                                <h2 class="text-lg font-medium text-gray-900 mb-4">System Status</h2>
+                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0">
+                                                <i class="fas fa-circle text-green-500"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h3 class="text-sm font-medium text-gray-900">Connection Status</h3>
+                                                <p class="mt-1 text-sm text-gray-500" id="status-connection">Checking...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0">
+                                                <i class="fas fa-clock text-blue-500"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h3 class="text-sm font-medium text-gray-900">Uptime</h3>
+                                                <p class="mt-1 text-sm text-gray-500" id="status-uptime">Calculating...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0">
+                                                <i class="fas fa-paper-plane text-indigo-500"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h3 class="text-sm font-medium text-gray-900">Messages Sent</h3>
+                                                <p class="mt-1 text-sm text-gray-500" id="status-messages">0</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const qrSection = document.getElementById('qr-section');
+        const mainContent = document.getElementById('main-content');
+        const logoutBtn = document.getElementById('logout-btn');
+        const connectionStatus = document.getElementById('connection-status');
+        let wsConnection;
+
+        // WebSocket connection for real-time updates
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            wsConnection = new WebSocket(`${protocol}//${window.location.host}/ws`);
+
+            wsConnection.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'qr') {
+                    // Show QR code
+                    document.getElementById('qr-image').src = data.qr;
+                    qrSection.classList.remove('hidden');
+                    mainContent.classList.add('hidden');
+                    logoutBtn.classList.add('hidden');
+                } else if (data.type === 'connection') {
+                    if (data.connected) {
+                        // Show main content when connected
+                        qrSection.classList.add('hidden');
+                        mainContent.classList.remove('hidden');
+                        logoutBtn.classList.remove('hidden');
+                        connectionStatus.textContent = 'Connected';
+                        connectionStatus.className = 'px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800';
+                    } else {
+                        connectionStatus.textContent = 'Disconnected';
+                        connectionStatus.className = 'px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800';
+                    }
+                }
+            };
+
+            wsConnection.onclose = () => {
+                // Reconnect after 5 seconds
+                setTimeout(connectWebSocket, 5000);
+            };
+        }
+
+        // Load saved settings
+        function loadSettings() {
+            fetch('/api/settings')
+                .then(response => response.json())
+                .then(settings => {
+                    document.getElementById('webhook-url').value = settings.webhookUrl || '';
+                    document.getElementById('delay-time').value = settings.delayTime || 2000;
+                    document.getElementById('enable-read-receipts').checked = settings.enableReadReceipts || false;
+                    document.getElementById('read-webhook-url').value = settings.readWebhookUrl || '';
+                })
+                .catch(error => console.error('Error loading settings:', error));
+        }
+
+        // Save webhook settings
+        document.getElementById('webhook-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const webhookUrl = document.getElementById('webhook-url').value;
+            const delayTime = document.getElementById('delay-time').value;
+
+            fetch('/api/settings/webhook', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ webhookUrl, delayTime }),
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert('Webhook settings saved successfully!');
+            })
+            .catch(error => {
+                console.error('Error saving webhook settings:', error);
+                alert('Error saving webhook settings');
+            });
+        });
+
+        // Save read receipt settings
+        document.getElementById('read-receipt-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const enableReadReceipts = document.getElementById('enable-read-receipts').checked;
+            const readWebhookUrl = document.getElementById('read-webhook-url').value;
+
+            fetch('/api/settings/read-receipts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ enableReadReceipts, readWebhookUrl }),
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert('Read receipt settings saved successfully!');
+            })
+            .catch(error => {
+                console.error('Error saving read receipt settings:', error);
+                alert('Error saving read receipt settings');
+            });
+        });
+
+        // Handle logout
+        logoutBtn.addEventListener('click', () => {
+            fetch('/api/logout', { method: 'POST' })
+                .then(() => {
+                    qrSection.classList.add('hidden');
+                    mainContent.classList.add('hidden');
+                    logoutBtn.classList.add('hidden');
+                    connectionStatus.textContent = 'Disconnected';
+                    connectionStatus.className = 'px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800';
+                })
+                .catch(error => console.error('Error logging out:', error));
+        });
+
+        // Update status
+        function updateStatus() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(status => {
+                    document.getElementById('status-connection').textContent = status.connected ? 'Online' : 'Offline';
+                    document.getElementById('status-uptime').textContent = status.uptime;
+                    document.getElementById('status-messages').textContent = status.messagesSent;
+
+                    if (status.connected) {
+                        qrSection.classList.add('hidden');
+                        mainContent.classList.remove('hidden');
+                        logoutBtn.classList.remove('hidden');
+                    }
+                })
+                .catch(error => console.error('Error updating status:', error));
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            connectWebSocket();
+            loadSettings();
+            setInterval(updateStatus, 5000);
+            updateStatus();
+        });
+    </script>
+</body>
+</html>
