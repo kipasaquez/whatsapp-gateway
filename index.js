@@ -212,18 +212,18 @@ async function startWhatsApp() {
     client.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect, qr } = update;
         
-        if (qr) {
-            // Generate QR code as data URL
-            const qrImage = qr.image(qr, { type: 'png' });
-            const chunks = [];
-            qrImage.on('data', (chunk) => chunks.push(chunk));
-            qrImage.on('end', () => {
-                const qrBuffer = Buffer.concat(chunks);
-                const qrDataUrl = 'data:image/png;base64,' + qrBuffer.toString('base64');
-                broadcast({ type: 'qr', qr: qrDataUrl });
-            });
-            logger.info('Scan QR code to connect to WhatsApp');
-        }
+    if (qr) {
+        // Generate QR code as data URL
+        const qrPng = qrImage.image(qr, { type: 'png' });
+        const chunks = [];
+        qrPng.on('data', (chunk) => chunks.push(chunk));
+        qrPng.on('end', () => {
+            const qrBuffer = Buffer.concat(chunks);
+            const qrDataUrl = 'data:image/png;base64,' + qrBuffer.toString('base64');
+            broadcast({ type: 'qr', qr: qrDataUrl });
+        });
+        logger.info('Scan QR code to connect to WhatsApp');
+    }
 
         if (connection === 'close') {
             const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== 403;
@@ -281,6 +281,64 @@ app.post('/api/logout', async (req, res) => {
     } catch (error) {
         logger.error('Error during logout:', error);
         res.status(500).json({ status: false, message: 'Error during logout' });
+    }
+});
+
+// Send text message API endpoint
+app.post('/send-text', async (req, res) => {
+    try {
+        const { number, message } = req.body;
+        if (!number || !message) {
+            return res.status(400).json({ status: false, message: 'Number and message are required' });
+        }
+        if (!waClient) {
+            return res.status(400).json({ status: false, message: 'WhatsApp client not connected' });
+        }
+
+        const jid = number.includes('@s.whatsapp.net') ? number : `${number}@s.whatsapp.net`;
+
+        const sentMsg = await waClient.sendMessage(jid, { text: message });
+        settings.messagesSent++;
+        res.json({ status: true, message: 'Pesan teks berhasil dikirim.', messageId: sentMsg.key.id });
+    } catch (error) {
+        logger.error('Error sending text message:', error);
+        res.status(500).json({ status: false, message: 'Error sending message' });
+    }
+});
+
+// Send media message API endpoint
+app.post('/send-media', async (req, res) => {
+    try {
+        const { number, type, url, caption } = req.body;
+        if (!number || !type || !url) {
+            return res.status(400).json({ status: false, message: 'Number, type, and url are required' });
+        }
+        if (!waClient) {
+            return res.status(400).json({ status: false, message: 'WhatsApp client not connected' });
+        }
+
+        const jid = number.includes('@s.whatsapp.net') ? number : `${number}@s.whatsapp.net`;
+
+        const mediaMessage = {};
+        if (type === 'image') {
+            mediaMessage.image = { url };
+        } else if (type === 'video') {
+            mediaMessage.video = { url };
+        } else if (type === 'document') {
+            mediaMessage.document = { url };
+        } else {
+            return res.status(400).json({ status: false, message: 'Invalid media type' });
+        }
+        if (caption) {
+            mediaMessage.caption = caption;
+        }
+
+        const sentMsg = await waClient.sendMessage(jid, mediaMessage);
+        settings.messagesSent++;
+        res.json({ status: true, message: 'Pesan media berhasil dikirim.', messageId: sentMsg.key.id });
+    } catch (error) {
+        logger.error('Error sending media message:', error);
+        res.status(500).json({ status: false, message: 'Error sending media message' });
     }
 });
 
