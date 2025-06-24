@@ -5,7 +5,7 @@ const axios = require('axios');
 const pino = require('pino');
 const qrcode = require('qrcode-terminal');
 const WebSocket = require('ws');
-const qr = require('qr-image');
+const qrImage = require('qr-image');
 const { default: makeWASocket, useMultiFileAuthState, delay } = require('@whiskeysockets/baileys');
 require('dotenv').config();
 
